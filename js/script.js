@@ -1,57 +1,78 @@
 "use strict";
-
-let numberOfFilmls;
-
-function start() {
-    numberOfFilmls = +prompt('Сколько фильмос вы уже посмотрели','');
-    while(numberOfFilmls == '' || numberOfFilmls == null || isNaN(numberOfFilmls)) {
-        numberOfFilmls = +prompt('Сколько фильмос вы уже посмотрели','');
-    }
-}
-
-start();
-
 const personalMovideDB = {
-    count: numberOfFilmls,
+    count: 0,
     movies: {},
     actors: {},
     genres: [],
-    privat: false
+    privat: false,
+    start: function() {
+        personalMovideDB.count = +prompt('Сколько фильмос вы уже посмотрели','');
+        while(personalMovideDB.count == '' || personalMovideDB.count == null || isNaN(personalMovideDB.count)) {
+            personalMovideDB.count = +prompt('Сколько фильмос вы уже посмотрели','');
+        }
+    },
+    detectPersonalLevel: function() {
+        if(personalMovideDB.count < 10 && personalMovideDB.count >= 1) {
+            alert("Просмотрено довольно мало фильмов");
+        } else if (personalMovideDB.count < 30 && personalMovideDB.count >= 10){
+            alert("Вы классический зритель");
+            
+        } else if (personalMovideDB.count >= 30 && personalMovideDB.count >= 30) {
+            alert("Вы киноман");
+        } else {
+            alert("Произошла ошибка");
+        }
+    },
+    rememberMyFilms: function() {
+        for (let i = 1; i <= 2; i++) {
+            const question1 = prompt('Один из последних просмотреных фильмов?',''),
+                question2 = prompt('На сколько оцените его?','');
+            if (question1 != null && question2 != null && question1 != '' && question2 != '' && question1.length < 50) {
+                personalMovideDB.movies[question1] = question2;
+                console.log('done');
+            }   else{
+                console.log('error');
+                i--;
+            }
+            
+        }
+    },
+    showMyDB: function(privat) {
+        if(!privat) {
+            console.log(personalMovideDB);
+        }
+    },
+    writeYourGenres: function() {
+        for (let i = 0; i < 3; i++) {
+            personalMovideDB.genres[i] = prompt(`Ваш любимый жанр под номером ${i + 1}`, '');
+            if(personalMovideDB.genres[i] == null || personalMovideDB.genres[i] == '') {
+                    i--;
+            }
+        }
+        personalMovideDB.genres.forEach(function (item, i) {
+            console.log(`Любимый жанр ${i + 1} - это ${item}`);
+        });
+    },
+    toggleVisibleMyDB: function() {
+        if(personalMovideDB.privat) {
+            personalMovideDB.privat = false;
+        } else {
+            personalMovideDB.privat = true;
+        }
+    }
 };
 
+// personalMovideDB.start();
+// personalMovideDB.detectPersonalLevel();
+// personalMovideDB.rememberMyFilms();
+personalMovideDB.toggleVisibleMyDB();
+personalMovideDB.showMyDB(personalMovideDB.privat);
 
 
-function detectPersonalLevel() {
-    if(personalMovideDB.count < 10 && personalMovideDB.count >= 1) {
-        alert("Просмотрено довольно мало фильмов");
-    } else if (personalMovideDB.count < 30 && personalMovideDB.count >= 10){
-        alert("Вы классический зритель");
-        
-    } else if (personalMovideDB.count >= 30 && personalMovideDB.count >= 30) {
-        alert("Вы киноман");
-    } else {
-        alert("Произошла ошибка");
-    }
-}
+// personalMovideDB.writeYourGenres();
 
-detectPersonalLevel();
 
-function rememberMyFilms() {
-    for (let i = 1; i <= 2; i++) {
-        const question1 = prompt('Один из последних просмотреных фильмов?',''),
-            question2 = prompt('На сколько оцените его?','');
-        if (question1 != null && question2 != null && question1 != '' && question2 != '' && question1.length < 50) {
-            personalMovideDB.movies[question1] = question2;
-            console.log('done');
-        }   else{
-            console.log('error');
-            i--;
-        }
-        
-    }
-}
-
-rememberMyFilms();
+// rememberMyFilms();
 
 // let i = 1;
 
@@ -83,18 +104,5 @@ rememberMyFilms();
     
 // }
 // while(i <= 2);
-function showMyDB(privat) {
-    if(!privat) {
-        console.log(personalMovideDB);
-    }
-}
 
-showMyDB(personalMovideDB.privat);
 
-function writeYourGenres() {
-    for (let i = 0;i < 3; i++) {
-        personalMovideDB.genres[i] = prompt(`Ваш любимый жанр под номером ${i + 1}`, '');
-    }
-}
-
-writeYourGenres();
