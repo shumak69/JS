@@ -1,108 +1,76 @@
-"use strict";
-const personalMovideDB = {
-    count: 0,
-    movies: {},
-    actors: {},
-    genres: [],
-    privat: false,
-    start: function() {
-        personalMovideDB.count = +prompt('Сколько фильмос вы уже посмотрели','');
-        while(personalMovideDB.count == '' || personalMovideDB.count == null || isNaN(personalMovideDB.count)) {
-            personalMovideDB.count = +prompt('Сколько фильмос вы уже посмотрели','');
-        }
-    },
-    detectPersonalLevel: function() {
-        if(personalMovideDB.count < 10 && personalMovideDB.count >= 1) {
-            alert("Просмотрено довольно мало фильмов");
-        } else if (personalMovideDB.count < 30 && personalMovideDB.count >= 10){
-            alert("Вы классический зритель");
-            
-        } else if (personalMovideDB.count >= 30 && personalMovideDB.count >= 30) {
-            alert("Вы киноман");
-        } else {
-            alert("Произошла ошибка");
-        }
-    },
-    rememberMyFilms: function() {
-        for (let i = 1; i <= 2; i++) {
-            const question1 = prompt('Один из последних просмотреных фильмов?',''),
-                question2 = prompt('На сколько оцените его?','');
-            if (question1 != null && question2 != null && question1 != '' && question2 != '' && question1.length < 50) {
-                personalMovideDB.movies[question1] = question2;
-                console.log('done');
-            }   else{
-                console.log('error');
-                i--;
-            }
-            
-        }
-    },
-    showMyDB: function(privat) {
-        if(!privat) {
-            console.log(personalMovideDB);
-        }
-    },
-    writeYourGenres: function() {
-        for (let i = 0; i < 3; i++) {
-            personalMovideDB.genres[i] = prompt(`Ваш любимый жанр под номером ${i + 1}`, '');
-            if(personalMovideDB.genres[i] == null || personalMovideDB.genres[i] == '') {
-                    i--;
-            }
-        }
-        personalMovideDB.genres.forEach(function (item, i) {
-            console.log(`Любимый жанр ${i + 1} - это ${item}`);
-        });
-    },
-    toggleVisibleMyDB: function() {
-        if(personalMovideDB.privat) {
-            personalMovideDB.privat = false;
-        } else {
-            personalMovideDB.privat = true;
-        }
-    }
-};
+'use strict';
 
-// personalMovideDB.start();
-// personalMovideDB.detectPersonalLevel();
-// personalMovideDB.rememberMyFilms();
-personalMovideDB.toggleVisibleMyDB();
-personalMovideDB.showMyDB(personalMovideDB.privat);
-
-
-// personalMovideDB.writeYourGenres();
-
-
-// rememberMyFilms();
-
-// let i = 1;
-
-// while (i <= 2) {
-//     const question1 = prompt('Один из последних просмотреных фильмов?',''),
-//         question2 = prompt('На сколько оцените его?','');
-//     if (question1 != null && question2 != null && question1 != '' && question2 != '' && question1.length < 50) {
-//         personalMovideDB.movies[question1] = question2;
-//         console.log('done');
-//     }   else{
-//         console.log('error');
-//         continue;
-//     }
-//     i++;
-// }
-
-// do {
-//     i++;
-//     const question1 = prompt('Один из последних просмотреных фильмов?',''),
-//         question2 = prompt('На сколько оцените его?','');
-//     if (question1 != null && question2 != null && question1 != '' && question2 != '' && question1.length < 50) {
-//         personalMovideDB.movies[question1] = question2;
-//         console.log('done');
-//     }   else{
-//         console.log('error');
-//         i--;
-//         continue;
-//     }
+document.addEventListener('DOMContentLoaded', () => {
+    const movieDB = {
+        movies: [
+            "Логан",
+            "Лига справедливости",
+            "Ла-ла лэнд",
+            "Одержимость",
+            "Скотт Пилигрим против..."
+        ]
+    };
     
-// }
-// while(i <= 2);
+    const ads = document.querySelectorAll('.promo__adv img'),
+        genre = document.querySelector('.promo__genre'),
+        bg = document.querySelector('.promo__bg'),
+        list = document.querySelector('.promo__interactive-list'),
+        addingInput = document.querySelector('.adding__input'),
+        form = document.querySelector('form.add'),
+        checkbox = document.querySelector('input[type="checkbox"]');
+    
+    ads.forEach(item => {
+        item.remove();
+    });
+    genre.innerHTML = 'Драма';
+    bg.style.background = 'url(img/bg.jpg)';
+    const additem = function()  {
+        list.innerHTML = '';
+        movieDB.movies.sort();
+        movieDB.movies.forEach((item, i) => {
+            list.innerHTML += `
+                <li class="promo__interactive-item">${i + 1} ${item}
+                    <div class="delete"></div>
+                </li>
+            `;
+        });
+
+        document.querySelectorAll('.delete').forEach((deleting, i) => {
+            deleting.addEventListener('click', () => {
+                deleting.parentElement.remove();
+                movieDB.movies.splice(i, 1);
+                // movieDB.movies[i].remove();
+
+                additem();
+            });
+        });
+    };
+    
+    additem();
+    
 
 
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        if(addingInput.value != '') {
+            if(21 < addingInput.value.length) {
+                addingInput.value = addingInput.value.slice(0, 20) + '...';
+                console.log(addingInput.value);
+            }
+            movieDB.movies.push(addingInput.value);
+            additem();
+            // addingInput.value = '';
+            
+            if(checkbox.checked) {
+                console.log("Добавляем любимый фильм");
+            }
+           e.target.reset();
+        }
+    });
+    // deleteMovie.forEach((item, i) => {
+    //     item.addEventListener('click', () => {
+    //         // movieDB.movies[i].remove();
+    //         console.log( movieDB.movies);
+    //     });
+    // });
+});
