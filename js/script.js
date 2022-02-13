@@ -97,7 +97,6 @@ window.addEventListener('DOMContentLoaded', () => {
     let checkModal = true;
 
     const modalOpen = document.querySelectorAll('[data-modal]'),
-        modalClose = document.querySelector('[data-close]'),
         modal = document.querySelector('.modal');
 
 
@@ -126,10 +125,8 @@ window.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = 'auto';
     }
 
-    modalClose.addEventListener('click', closeModal);
-
     modal.addEventListener('click', (e) => {
-        if(e.target === modal) {
+        if(e.target === modal || e.target.getAttribute('data-close') == '') {
             closeModal();
         }
     });
@@ -202,4 +199,91 @@ window.addEventListener('DOMContentLoaded', () => {
     new Card(
         'Меню "Постное"', `Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.`, 16, "img/tabs/post.jpg", "post", '.menu .container',
         ).render();
+    
+    // Forms
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: 'img/form/spinner.svg',
+        success: 'Спасибо! Скоро мы с вами свяжемся',
+        failure: 'Что-то пошло не так...'
+    };
+
+    forms.forEach(item => {
+        PostData(item);
+    });
+
+    function PostData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            window.removeEventListener('scroll', showModalByScroll);
+            checkModal = false;
+            clearInterval(modalTime);
+            const statusMessage = document.createElement('img');
+            statusMessage.src = message.loading;
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
+            // form.append(statusMessage);
+            form.insertAdjacentElement('afterend', statusMessage);
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            //JSON
+            /* request.setRequestHeader('Content-type', 'application/json'); */ 
+            const formData = new FormData(form);
+
+            //JSON
+            /* const object = {};
+            formData.forEach(function(value, key) {
+                object[key] = value;
+            }); */ 
+
+            // JSON
+           /*  const json = JSON.stringify(object); */ 
+
+            //JSON
+           /*  request.send(json); */ 
+            request.send(formData); 
+            request.addEventListener('load', () => {
+                if(request.status === 200) {
+                    console.log(request.response);
+                    showThanksModal(message.success);
+                    form.reset();
+                    statusMessage.remove();
+                }
+                else {
+                    showThanksModal(message.failure);
+                }
+            });
+        });
+    }
+
+    function showThanksModal(message) {
+        const prevModalDialog = document.querySelector('.modal__dialog');
+
+        // prevModalDialog.style.opacity = 0;
+        // prevModalDialog.style.visibility = 'hidden';
+        prevModalDialog.style.display = 'none';
+        showModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.style.opacity = 1;
+            prevModalDialog.style.visibility = 'visible';
+            prevModalDialog.style.display = 'block';
+            closeModal();
+        }, 4000); 
+    }
 });
