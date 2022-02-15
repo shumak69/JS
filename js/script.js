@@ -107,6 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     });
     modal.style.display = 'block';
+    
     modal.style.opacity = 0;
     modal.style.visibility = 'hidden';
 
@@ -114,6 +115,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.style.transition = '.5s';
         modal.style.opacity = 1;
         // modal.style.display = 'block';
+        document.querySelector('.modal__dialog').style.display = 'block';
         modal.style.visibility = 'visible';
         document.body.style.overflow = 'hidden';
         checkModal = false;
@@ -153,54 +155,92 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Cards
 
-    class Card {
-        constructor(title, descr, price, img, alt, parentSelector, ...classes) {
-            this.title = title;
-            this.descr = descr;
-            this.price = price;
-            this.classes = classes;
-            this.img = img;
-            this.parentSelector = document.querySelector(parentSelector);
-            this.alt = alt;
-            this.trasfer = 27;
-            this.changeToUAH();
+    // class Card {
+    //     constructor(title, descr, price, img, alt, parentSelector, ...classes) {
+    //         this.title = title;
+    //         this.descr = descr;
+    //         this.price = price;
+    //         this.classes = classes;
+    //         this.img = img;
+    //         this.parentSelector = document.querySelector(parentSelector);
+    //         this.alt = alt;
+    //         this.trasfer = 27;
+    //         this.changeToUAH();
+    //     }
+
+    //     changeToUAH() {
+    //         this.price = this.price * this.trasfer;
+    //     }
+
+    //     render() {
+    //         const element = document.createElement('div');
+    //         if (this.classes.length === 0) {
+    //             this.classes = 'menu__item';
+    //             element.classList.add(this.classes);
+    //         } else {
+    //             this.classes.forEach(className => element.classList.add(className));
+    //         }
+    //         element.innerHTML = `
+    //             <img src=${this.img} alt=${this.alt}>
+    //             <h3 class="menu__item-subtitle">${this.title}</h3>
+    //             <div class="menu__item-descr">${this.descr}</div>
+    //             <div class="menu__item-divider"></div>
+    //             <div class="menu__item-price">
+    //                 <div class="menu__item-cost">Цена:</div>
+    //                 <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+    //             </div>
+    //         `;
+    //         this.parentSelector.append(element);
+    //     }
+    // }
+
+    const getCards = async (url) => {
+        const res = await fetch(url);
+
+        if(!res.ok) {
+            throw new Error(`Could not fetch ${url}, status ${fetch.status}`);
         }
 
-        changeToUAH() {
-            this.price = this.price * this.trasfer;
-        }
+        return  await res.json();
+    };
 
-        render() {
+    // getCards('http://localhost:3000/menu').then(data => {
+    //     data.forEach(({title, descr, price, img, altimg}) => {
+    //         new Card(title, descr, price, img, altimg, '.menu .container').render();
+    //     });
+    // });
+
+    getCards('http://localhost:3000/menu').then(data => createCard(data));
+
+    function createCard(data) {
+        data.forEach(({title, descr, price, img, altimg}) => {
             const element = document.createElement('div');
-            if (this.classes.length === 0) {
-                this.classes = 'menu__item';
-                element.classList.add(this.classes);
-            } else {
-                this.classes.forEach(className => element.classList.add(className));
-            }
+            element.classList.add('menu__item');
+            price*=27;
             element.innerHTML = `
-                <img src=${this.img} alt=${this.alt}>
-                <h3 class="menu__item-subtitle">${this.title}</h3>
-                <div class="menu__item-descr">${this.descr}</div>
+                <img src=${img} alt=${altimg}>
+                <h3 class="menu__item-subtitle">${title}</h3>
+                <div class="menu__item-descr">${descr}</div>
                 <div class="menu__item-divider"></div>
                 <div class="menu__item-price">
                     <div class="menu__item-cost">Цена:</div>
-                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                    <div class="menu__item-total"><span>${price}</span> грн/день</div>
                 </div>
-            `;
-            this.parentSelector.append(element);
-        }
+            `
+
+            document.querySelector('.menu .container').append(element);
+        }); 
     }
 
-    new Card(
-        'Меню "Фитнес"', `Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!`, 9, "img/tabs/vegy.jpg", "vegy", '.menu .container'
-    ).render();
-    new Card(
-        'Меню “Премиум”', `Меню "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!`, 20, "img/tabs/elite.jpg", "elite", '.menu .container'
-    ).render();
-    new Card(
-        'Меню "Постное"', `Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.`, 16, "img/tabs/post.jpg", "post", '.menu .container',
-    ).render();
+    // new Card(
+    //     'Меню "Фитнес"', `Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!`, 9, "img/tabs/vegy.jpg", "vegy", '.menu .container'
+    // ).render();
+    // new Card(
+    //     'Меню “Премиум”', `Меню "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!`, 20, "img/tabs/elite.jpg", "elite", '.menu .container'
+    // ).render();
+    // new Card(
+    //     'Меню "Постное"', `Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.`, 16, "img/tabs/post.jpg", "post", '.menu .container',
+    // ).render();
 
     // Forms
     const forms = document.querySelectorAll('form');
@@ -212,10 +252,24 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        PostData(item);
+        bindPostData(item);
     });
 
-    function PostData(form) {
+    const postData = async (url, data) => {
+        let res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' 
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+
+
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             window.removeEventListener('scroll', showModalByScroll);
@@ -244,6 +298,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;
             }); 
 
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+
             // JSON
             // const json = JSON.stringify(object);
 
@@ -251,14 +307,8 @@ window.addEventListener('DOMContentLoaded', () => {
             /*  request.send(json); */
 
             // request.send(formData);
-
-            fetch('server.php', {
-                method: 'POST',
-                header: {
-                    'Content-type': 'application/json' //json
-                },
-                body: JSON.stringify(object)
-            }).then(data => data.text())
+            
+            postData('http://localhost:3000/requests', json)
             .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
@@ -288,8 +338,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
         // prevModalDialog.style.opacity = 0;
         // prevModalDialog.style.visibility = 'hidden';
-        prevModalDialog.style.display = 'none';
         showModal();
+        prevModalDialog.style.display = 'none';
 
         const thanksModal = document.createElement('div');
         thanksModal.classList.add('modal__dialog');
@@ -309,4 +359,71 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 4000);
     }
+
+    fetch('http://localhost:3000/menu')
+    .then(data => data.json())
+    .then(res => console.log(res));
+
+    // Slider
+
+    const slide = document.querySelectorAll('.offer__slide');
+    let currentSlide = 0;
+    let counterSlider = slide.length;
+    function hideSlide() {
+        slide.forEach((item) =>{
+        item.classList.add('hide');
+    });
+    }
+    function checkSlider() {
+        if(currentSlide == -1) {
+            currentSlide = counterSlider - 1;
+        }else if(currentSlide == counterSlider) {
+            currentSlide = 0;
+        }
+    }
+    function showSlide() {
+        slide.forEach((item, i) =>{
+        if(currentSlide == i) {
+            item.classList.add('show');
+            item.classList.remove('hide');
+        }
+        
+    });
+    }
+    
+    function checkNumber(num) {
+        if(num >= 0 && num <10) {
+            return '0' + num;
+        } else {
+            return num;
+        }
+    }
+
+    function slider() {
+        const prev = document.querySelector('.offer__slider-prev'),
+            next = document.querySelector('.offer__slider-next'),
+            total = document.querySelector('#total'),
+            current = document.querySelector('#current');
+        total.textContent = checkNumber(counterSlider);
+        current.textContent = checkNumber(currentSlide + 1);
+        prev.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentSlide --;
+            checkSlider();
+            current.textContent = checkNumber(currentSlide + 1);
+            hideSlide();
+            showSlide();
+        });
+        next.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentSlide ++;
+            checkSlider();
+            current.textContent = checkNumber(currentSlide + 1);
+            hideSlide();
+            showSlide();
+        });
+        hideSlide();
+        showSlide();
+    }
+    slider();
 });
