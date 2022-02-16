@@ -409,6 +409,8 @@ window.addEventListener('DOMContentLoaded', () => {
             offset += parseInt(width);
             currentSlide ++;
         }
+        removeDotsActive();
+        dots[currentSlide].classList.add('active');
         current.textContent = checkNumber(currentSlide + 1);
         slidesField.style.transform = `translateX(-${offset}px)`;
     });
@@ -421,6 +423,8 @@ window.addEventListener('DOMContentLoaded', () => {
             offset -= parseInt(width);
             currentSlide --;
         }
+        removeDotsActive();
+        dots[currentSlide].classList.add('active');
         current.textContent = checkNumber(currentSlide + 1);
         slidesField.style.transform = `translateX(-${offset}px)`;
     });
@@ -481,4 +485,34 @@ window.addEventListener('DOMContentLoaded', () => {
     //     showSlide();
     // }
     // slider();
+
+    // Slider dots 
+    const dotsWrapper = document.querySelector('.carousel-indicators'),
+        clider = document.querySelector('.offer__slider');
+    clider.style.position = 'relative';
+    for(let i = 0; i < slide.length; i++) {
+        const dots = document.createElement('div');
+        dotsWrapper.append(dots);
+        dots.classList.add('dot');
+    }
+
+    function removeDotsActive() {
+        dots.forEach(item => {
+            item.classList.remove('active');
+        });
+    }
+
+    const dots = document.querySelectorAll('.dot');
+    dots[0].classList.add('active');
+    dots.forEach((item, i) => {
+        item.addEventListener('click', () =>{
+            offset = parseInt(width) * i;
+            currentSlide = i;
+            current.textContent = checkNumber(currentSlide + 1);
+            removeDotsActive();
+            item.classList.add('active');
+            slidesField.style.transform = `translateX(-${offset}px)`;
+        });
+    });
+    
 });
