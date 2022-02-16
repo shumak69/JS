@@ -226,20 +226,29 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div class="menu__item-cost">Цена:</div>
                     <div class="menu__item-total"><span>${price}</span> грн/день</div>
                 </div>
-            `
+            `;
 
             document.querySelector('.menu .container').append(element);
         }); 
     }
 
     // new Card(
-    //     'Меню "Фитнес"', `Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!`, 9, "img/tabs/vegy.jpg", "vegy", '.menu .container'
+    //     'Меню "Фитнес"', `Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. 
+    // Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!`, 
+    // 9, "img/tabs/vegy.jpg", "vegy", '.menu .container'
     // ).render();
     // new Card(
-    //     'Меню “Премиум”', `Меню "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!`, 20, "img/tabs/elite.jpg", "elite", '.menu .container'
+    //     'Меню “Премиум”', `Меню "В меню “Премиум” мы используем не только красивый дизайн упаковки, 
+    // но и качественное исполнение блюд. Красная рыба, морепродукты
+    // , фрукты - ресторанное меню без похода в ресторан!`, 
+    // 20, "img/tabs/elite.jpg", "elite", '.menu .container'
     // ).render();
     // new Card(
-    //     'Меню "Постное"', `Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.`, 16, "img/tabs/post.jpg", "post", '.menu .container',
+    //     'Меню "Постное"', `Меню “Постное” - это тщательный подб
+    // ор ингредиентов: полное отсутствие продуктов животного происхождения, м
+    // олоко из миндаля, овса, кокоса или гречки, правильное
+    //  количество белков за счет тофу и импортных вегетарианских стейков.`
+    // , 16, "img/tabs/post.jpg", "post", '.menu .container',
     // ).render();
 
     // Forms
@@ -367,29 +376,75 @@ window.addEventListener('DOMContentLoaded', () => {
     // Slider
 
     const slide = document.querySelectorAll('.offer__slide');
+    const prev = document.querySelector('.offer__slider-prev'),
+            next = document.querySelector('.offer__slider-next'),
+            total = document.querySelector('#total'),
+            current = document.querySelector('#current'),
+            sliderWrapper = document.querySelector('.offer__slider-wrapper'),
+            slidesField = document.querySelector('.offer__slider-inner'),
+            width = window.getComputedStyle(sliderWrapper).width,
+            img = document.querySelectorAll('img');
     let currentSlide = 0;
     let counterSlider = slide.length;
-    function hideSlide() {
-        slide.forEach((item) =>{
-        item.classList.add('hide');
+    let offset = 0;
+
+    img.forEach(item => {
+        item.style.userSelect = 'none';
     });
-    }
-    function checkSlider() {
-        if(currentSlide == -1) {
-            currentSlide = counterSlider - 1;
-        }else if(currentSlide == counterSlider) {
+    slidesField.style.width = 100 * slide.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+    total.textContent = checkNumber(counterSlider);
+    current.textContent = checkNumber(currentSlide + 1);
+
+    sliderWrapper.style.overflow = 'hidden';
+    slide.forEach(item => {
+        item.style.width = width;
+    }); 
+    next.addEventListener('click', () => {
+        if(offset == parseInt(width) * (slide.length - 1)) {
+            offset = 0;
             currentSlide = 0;
+        } else {
+            offset += parseInt(width);
+            currentSlide ++;
         }
-    }
-    function showSlide() {
-        slide.forEach((item, i) =>{
-        if(currentSlide == i) {
-            item.classList.add('show');
-            item.classList.remove('hide');
-        }
-        
+        current.textContent = checkNumber(currentSlide + 1);
+        slidesField.style.transform = `translateX(-${offset}px)`;
     });
-    }
+
+    prev.addEventListener('click', () => {
+        if(offset <= 0) {
+            offset = parseInt(width) * (slide.length - 1);
+            currentSlide = slide.length - 1;
+        } else {
+            offset -= parseInt(width);
+            currentSlide --;
+        }
+        current.textContent = checkNumber(currentSlide + 1);
+        slidesField.style.transform = `translateX(-${offset}px)`;
+    });
+    // function hideSlide() {
+    //     slide.forEach((item) =>{
+    //     item.classList.add('hide');
+    // });
+    // }
+    // function checkSlider() {
+    //     if(currentSlide == -1) {
+    //         currentSlide = counterSlider - 1;
+    //     }else if(currentSlide == counterSlider) {
+    //         currentSlide = 0;
+    //     }
+    // }
+    // function showSlide() {
+    //     slide.forEach((item, i) =>{
+    //     if(currentSlide == i) {
+    //         item.classList.add('show');
+    //         item.classList.remove('hide');
+    //     }
+        
+    // });
+    // }
     
     function checkNumber(num) {
         if(num >= 0 && num <10) {
@@ -399,31 +454,31 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function slider() {
-        const prev = document.querySelector('.offer__slider-prev'),
-            next = document.querySelector('.offer__slider-next'),
-            total = document.querySelector('#total'),
-            current = document.querySelector('#current');
-        total.textContent = checkNumber(counterSlider);
-        current.textContent = checkNumber(currentSlide + 1);
-        prev.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentSlide --;
-            checkSlider();
-            current.textContent = checkNumber(currentSlide + 1);
-            hideSlide();
-            showSlide();
-        });
-        next.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentSlide ++;
-            checkSlider();
-            current.textContent = checkNumber(currentSlide + 1);
-            hideSlide();
-            showSlide();
-        });
-        hideSlide();
-        showSlide();
-    }
-    slider();
+    // function slider() {
+    //     const prev = document.querySelector('.offer__slider-prev'),
+    //         next = document.querySelector('.offer__slider-next'),
+    //         total = document.querySelector('#total'),
+    //         current = document.querySelector('#current');
+    //     total.textContent = checkNumber(counterSlider);
+    //     current.textContent = checkNumber(currentSlide + 1);
+    //     prev.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         currentSlide --;
+    //         checkSlider();
+    //         current.textContent = checkNumber(currentSlide + 1);
+    //         hideSlide();
+    //         showSlide();
+    //     });
+    //     next.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         currentSlide ++;
+    //         checkSlider();
+    //         current.textContent = checkNumber(currentSlide + 1);
+    //         hideSlide();
+    //         showSlide();
+    //     });
+    //     hideSlide();
+    //     showSlide();
+    // }
+    // slider();
 });
