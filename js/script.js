@@ -402,11 +402,11 @@ window.addEventListener('DOMContentLoaded', () => {
         item.style.width = width;
     }); 
     next.addEventListener('click', () => {
-        if(offset == parseInt(width) * (slide.length - 1)) {
+        if(offset == retNumbers(width) * (slide.length - 1)) {
             offset = 0;
             currentSlide = 0;
         } else {
-            offset += parseInt(width);
+            offset += retNumbers(width);
             currentSlide ++;
         }
         removeDotsActive();
@@ -417,10 +417,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     prev.addEventListener('click', () => {
         if(offset <= 0) {
-            offset = parseInt(width) * (slide.length - 1);
+            offset = retNumbers(width) * (slide.length - 1);
             currentSlide = slide.length - 1;
         } else {
-            offset -= parseInt(width);
+            offset -= retNumbers(width);
             currentSlide --;
         }
         removeDotsActive();
@@ -496,6 +496,10 @@ window.addEventListener('DOMContentLoaded', () => {
         dots.classList.add('dot');
     }
 
+    function retNumbers(n) {
+        return +n.replace(/\D/g, '');
+    }
+
     function removeDotsActive() {
         dots.forEach(item => {
             item.classList.remove('active');
@@ -506,7 +510,7 @@ window.addEventListener('DOMContentLoaded', () => {
     dots[0].classList.add('active');
     dots.forEach((item, i) => {
         item.addEventListener('click', () =>{
-            offset = parseInt(width) * i;
+            offset = retNumbers(width) * i;
             currentSlide = i;
             current.textContent = checkNumber(currentSlide + 1);
             removeDotsActive();
