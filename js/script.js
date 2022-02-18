@@ -540,6 +540,29 @@ window.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('ratio', 1.375);
     }
 
+    function initLocalData(selector) {
+        const input = document.querySelectorAll(selector);
+        input.forEach((item) => {
+            if(localStorage.getItem('height') && item.getAttribute('id') == 'height') {
+                height = localStorage.getItem('height');
+                item.value = height;
+            }
+            if(localStorage.getItem('weight') && item.getAttribute('id') == 'weight') {
+                weight = localStorage.getItem('weight');
+                item.value = weight;
+            }
+            if(localStorage.getItem('age') && item.getAttribute('id') == 'age') {
+                age = localStorage.getItem('age');
+                item.value = age;
+            }
+        });
+       
+    }
+    initLocalData('#height');
+    initLocalData('#weight');
+    initLocalData('#age');
+    
+
     function initLocalSettings(selector, activeClass) {
         const elements = document.querySelectorAll(selector);
 
@@ -611,12 +634,15 @@ window.addEventListener('DOMContentLoaded', () => {
             switch(input.getAttribute('id')) {
                 case 'height':
                     height = +input.value;
+                    localStorage.setItem('height', height);
                     break;
                 case 'weight':
                     weight = +input.value;
+                    localStorage.setItem('weight', weight);
                     break;
                 case 'age':
                     age = +input.value;
+                    localStorage.setItem('age', age);
                     break;
             }
             calcTotal();
