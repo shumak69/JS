@@ -1,3 +1,4 @@
+import { getCards } from "../services/services";
 function cards() {
     class Card {
         constructor(title, descr, price, img, alt, parentSelector, ...classes) {
@@ -38,15 +39,7 @@ function cards() {
         }
     }
 
-    const getCards = async (url) => {
-        const res = await fetch(url);
-
-        if(!res.ok) {
-            throw new Error(`Could not fetch ${url}, status ${fetch.status}`);
-        }
-
-        return  await res.json();
-    };
+    
 
     getCards('http://localhost:3000/menu').then(data => {
         data.forEach(({title, descr, price, img, altimg}) => {
@@ -55,4 +48,4 @@ function cards() {
     });
 }
 
-module.exports = cards;
+export default cards;
